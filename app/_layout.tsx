@@ -1,19 +1,18 @@
-import { Stack } from "expo-router";
+import InitialLayout from "@/components/InitialLayout";
+import { COLORS } from "@/constants/theme";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+
+import { ClerkProvider } from "@clerk/clerk-expo";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        <Stack>
-          <Stack.Screen name="index" options={{ title: "Home" }} />
-          <Stack.Screen name="profile" options={{ title: "Profile" }} />
-          <Stack.Screen
-            name="notifications"
-            options={{ title: "Notifications", headerShown: false }}
-          />
-        </Stack>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <ClerkProvider tokenCache={tokenCache}>
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.background }}>
+          <InitialLayout />
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </ClerkProvider>
   );
 }
