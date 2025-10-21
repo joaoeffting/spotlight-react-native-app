@@ -1,23 +1,22 @@
-import { Link } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import StoriesSection from "@/components/Stories";
+import { COLORS } from "@/constants/theme";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { Text, TouchableOpacity, View } from "react-native";
+import { styles } from "../../styles/feed.styles";
 
 export default function Index() {
+  const { signOut } = useAuth();
   return (
     <View style={styles.container}>
-      <Link href="/profile">Profile</Link>
-      <Link href="/notifications">Notifications</Link>
+      {/* header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Spotlight</Text>
+        <TouchableOpacity onPress={() => signOut()}>
+          <Ionicons name="log-out-outline" size={24} color={COLORS.white} />
+        </TouchableOpacity>
+      </View>
+      <StoriesSection />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    color: "red",
-    fontSize: 50,
-  },
-});
