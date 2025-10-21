@@ -217,4 +217,14 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  noPostsContainer: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noPostsText: {
+    fontSize: 20,
+    color: COLORS.primary,
+  },
 });

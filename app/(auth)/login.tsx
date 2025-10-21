@@ -3,7 +3,7 @@ import { useSSO } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { styles } from "./auth.styles";
+import { styles } from "../../styles/auth.styles";
 
 export default function Login() {
   const { startSSOFlow } = useSSO();
