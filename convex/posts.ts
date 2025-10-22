@@ -85,3 +85,47 @@ export const getPosts = query({
     return postsWithInfo;
   },
 });
+
+export const likePostMutation = mutation({
+  args: {
+    postId: v.id("posts"),
+  },
+  handler: async (ctx, args) => {
+    const currentUser = await getAuthenticatedUser(ctx);
+    const post = await ctx.db.get(args.postId);
+    if (!post) {
+      throw new Error("Post not found");
+    }
+
+    const isAlreadyLiked = await ctx.db
+      .query("likes")
+      .withIndex("by_user_and_post", (q) =>
+        q.eq("userId", currentUser._id).eq("postId", args.postId)
+      )
+      .first();
+    if (isAlreadyLiked) {
+      await ctx.db.delete(isAlreadyLiked._id);
+    } else {
+      await ctx.db.insert("likes", {
+        userId: currentUser._id,
+        postId: args.postId,
+      });
+    }
+    await ctx.db.patch(args.postId, {
+      likes: !!isAlreadyLiked ? post.likes - 1 : post.likes + 1,
+    });
+
+    if (currentUser._id !== post.userId) {
+      await ctx.db.insert("notifications", {
+        receiverId: post.userId,
+        senderId: currentUser._id,
+        type: "like",
+        postId: args.postId,
+      });
+    }
+
+    return {
+      success: true,
+    };
+  },
+});

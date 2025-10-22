@@ -1,13 +1,30 @@
 import { COLORS } from "@/constants/theme";
+import { api } from "@/convex/_generated/api";
 import { PostsWithInfo } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
+import { useMutation } from "convex/react";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styles/feed.styles";
 
 export default function Post({ post }: { post: PostsWithInfo }) {
+  const [isLiking, setIsLiking] = useState(false);
+
+  const likePostMutation = useMutation(api.posts.likePostMutation);
+
+  const handleLike = async () => {
+    try {
+      setIsLiking(true);
+      await likePostMutation({ postId: post._id });
+    } catch (error) {
+      console.error("Error liking post: ", error);
+    } finally {
+      setIsLiking(false);
+    }
+  };
+
   return (
     <View style={styles.post}>
       {/* header */}
@@ -44,9 +61,24 @@ export default function Post({ post }: { post: PostsWithInfo }) {
       {/* POST ACTIONS */}
       <View style={styles.postActions}>
         <View style={styles.postActionsLeft}>
-          <TouchableOpacity>
-            <Ionicons name={"heart-outline"} size={24} color={COLORS.white} />
+          <TouchableOpacity onPress={handleLike} disabled={isLiking}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 4,
+              }}
+            >
+              <Ionicons
+                name={post.isLiked ? "heart" : "heart-outline"}
+                size={24}
+                color={post.isLiked ? COLORS.primary : COLORS.white}
+              />
+              <Text style={styles.likesText}>{post.likes}</Text>
+            </View>
           </TouchableOpacity>
+
           <TouchableOpacity onPress={() => {}}>
             <Ionicons
               name="chatbubble-outline"
