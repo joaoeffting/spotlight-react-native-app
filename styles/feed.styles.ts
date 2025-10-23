@@ -133,7 +133,7 @@ export const styles = StyleSheet.create({
   },
   modalContainer: {
     backgroundColor: COLORS.background,
-    marginBottom: Platform.OS === "ios" ? 44 : 0,
+    marginBottom: Platform.OS === "ios" ? 42 : 0,
     flex: 1,
     marginTop: Platform.OS === "ios" ? 44 : 0,
   },

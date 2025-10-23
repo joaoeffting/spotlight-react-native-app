@@ -3,14 +3,17 @@ import { api } from "@/convex/_generated/api";
 import { PostsWithInfo } from "@/types/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation } from "convex/react";
+import { formatDistanceToNow } from "date-fns";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styles/feed.styles";
+import CommentsModal from "./CommentsModal";
 
 export default function Post({ post }: { post: PostsWithInfo }) {
   const [isLiking, setIsLiking] = useState(false);
+  const [showComments, setShowComments] = useState(false);
 
   const likePostMutation = useMutation(api.posts.likePostMutation);
 
@@ -79,7 +82,11 @@ export default function Post({ post }: { post: PostsWithInfo }) {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity
+            onPress={() => {
+              setShowComments(true);
+            }}
+          >
             <Ionicons
               name="chatbubble-outline"
               size={22}
@@ -101,14 +108,28 @@ export default function Post({ post }: { post: PostsWithInfo }) {
             <Text style={styles.captionText}>{post.caption}</Text>
           </View>
         )}
-        <TouchableOpacity onPress={() => {}}>
-          <Text style={styles.commentsText}>
-            View all {post.comments} comments
-          </Text>
-        </TouchableOpacity>
 
-        <Text style={styles.timeAgo}>2 days ago</Text>
+        {post.comments > 0 && (
+          <TouchableOpacity
+            onPress={() => {
+              setShowComments(true);
+            }}
+          >
+            <Text style={styles.commentsText}>
+              View all {post.comments} comments
+            </Text>
+          </TouchableOpacity>
+        )}
+
+        <Text style={styles.timeAgo}>
+          {formatDistanceToNow(post._creationTime, { addSuffix: true })}
+        </Text>
       </View>
+      <CommentsModal
+        visible={showComments}
+        onClose={() => setShowComments(false)}
+        postId={post._id}
+      />
     </View>
   );
 }
